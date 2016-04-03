@@ -1,1 +1,2 @@
 pysal
+scipy
