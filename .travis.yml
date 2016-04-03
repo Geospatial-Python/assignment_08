@@ -1,31 +1,13 @@
-cache: apt
-sudo: false
 language: python
 python:
-  - "3.5"
+  - "3.4"
 
 #command to run tests
 script: nosetests
 
-# http://lmjohns3.com/2015/06/using-travis-ci-with-miniconda-scipy-and-nose.html
-addons:
-  apt:
-    packages:
-    - libatlas-dev
-    - libatlas-base-dev
-    - liblapack-dev
-    - gfortran
+#http://danielnouri.org/notes/2012/11/23/use-apt-get-to-install-python-dependencies-for-travis-ci/
+virtualenv:
+  system_site_packages: true
+  
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - conda update --yes conda
-install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy
-#  - pip install pytest-pep8 pytest-cov python-coveralls
-#  - python setup.py develop
-#  - pip install -r requirements.txt
-  - pip install pysal
-  - pip install scipy
-after_success:
-  - coveralls
+ - sudo apt-get install -qq python-numpy python-scipy
