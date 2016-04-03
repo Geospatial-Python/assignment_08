@@ -24,5 +24,6 @@ install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy
 #  - pip install pytest-pep8 pytest-cov python-coveralls
 #  - python setup.py develop
+  - pip install -r requirements.txt
 after_success:
   - coveralls
