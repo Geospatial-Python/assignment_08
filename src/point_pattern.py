@@ -21,9 +21,14 @@ class PointPattern(object):
     def average_nearest_neighbor_distance(self):
         return analytics.average_nearest_neighbor_distance(self.points)
 
-    def average_nearest_neighbor_distance_kdtree(self):
+    def average_nearest_neighbor_distance_kdtree(self, mark_name=None, mark_value=None):
         point_list = []
-        for point in self.points:
+        points = None
+        if mark_name is None:
+            points = self.points
+        else:
+            points = list(filter(lambda current_point: current_point.mark[mark_name] == mark_value, self.points))
+        for point in points:
             point_list.append(point.get_array())
         point_stack = np.vstack(point_list)
         kdtree = ss.KDTree(point_stack)
@@ -106,7 +111,15 @@ class PointPattern(object):
         return to_return
 
     def generate_realizations(self, k):
-        return analytics.permutations(k)
+        n = 100
+        to_return = []
+        for i in range(k):
+            to_return.append(
+                analytics.average_nearest_neighbor_distance(
+                    self.generate_random_points(count=n)
+                )
+            )
+        return to_return
 
     def get_critical_points(self):
         return analytics.compute_critical(self.generate_realizations(100))
