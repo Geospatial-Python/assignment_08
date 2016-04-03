@@ -1,6 +1,5 @@
 import json
 
-
 def read_geojson(input_file):
     """
     Read a geojson file
@@ -15,6 +14,7 @@ def read_geojson(input_file):
     """
     # Please use the python json module (imported above)
     # to solve this one.
-    with open(input_file, 'r') as fp:
-        gj = json.load(fp)
+    with open ('data/us_cities.geojson', 'r') as f:
+        gj = json.load(f)
+    
     return gj
