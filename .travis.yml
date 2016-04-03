@@ -4,10 +4,3 @@ python:
 
 #command to run tests
 script: nosetests
-
-# Scipy fix offered here: http://stackoverflow.com/a/18986891
-virtualenv:
-  system_site_packages: true
-  
-before_install:
- - sudo apt-get install -qq python-numpy python-scipy
