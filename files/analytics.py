@@ -51,16 +51,6 @@ def average_nearest_neighbor_distance(points, mark=None):
      Measure of Spatial Relationships in Populations. Ecology. 35(4)
      p. 445-453.
     """
-    
-    temp = []
-
-    if mark is not None:
-       for point in points:
-            if point.mark is mark:
-                temp.append(point)
-    else:
-        temp = points
-        
         
     sum_nn_dis = 0
 
@@ -80,7 +70,24 @@ def average_nearest_neighbor_distance(points, mark=None):
         sum_nn_dis += nn_dis
         mean_distance = sum_nn_dis / len(points)
     return mean_distance
-
+    
+def avg_nn_marks(points, marks=None)
+        
+    if mark is not None:
+        marked_points = list()
+       for point in points:
+            if point.mark is mark:
+                marked_points.append(point)
+            else:
+                continue
+        return average_nearest_neighbor_distance(marked_points)
+    else:
+        combined_points = list((point) for point in points)
+        return average_nearest_neighbor_distance(combined_points)
+    
+    
+    
+        
 def permutations(p = 99, marks=None):
     n = 100
     permutations = []
