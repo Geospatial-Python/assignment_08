@@ -21,7 +21,20 @@ class PointPattern(object):
     def average_nearest_neighbor_distance(self, mark=None):
     
         return analytics.average_nearest_neighbor_distance(self.points, mark)
+    
+    def average_nearest_neighbor_distance_kdtree(self, , )
+        points_list = []
+        points = None
         
+    def average_nearest_neighbor_distance_numpy(self)
+        points_list = []
+        for point in self.points:
+            point_list.append(point.array())
+        ndarray = np.array(point_list)
+        nn = []
+        temp_nn = None
+        
+       
     def number_of_coincident(self):
       
       nc = 0
