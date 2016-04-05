@@ -22,9 +22,15 @@ class PointPattern(object):
     
         return analytics.average_nearest_neighbor_distance(self.points, mark)
     
-    def average_nearest_neighbor_distance_kdtree(self, , )
-        points_list = []
-        points = None
+    def average_nearest_neighbor_distance_kdtree(self)
+    nn_distances = []
+    for p in points:
+    nearest_neighbor_distance, nearest_neighbor = kdtree.query(p, k=2)
+    nn_distances.append(nearest_neighbor_distance[0])
+    nn_distances.append(nearest_neighbor_distance[1])
+    nn_distances = np.array(nn_distances)
+    
+    print(nearest_neighbor_distance, nearest_neighbor)
         
     def average_nearest_neighbor_distance_numpy(self)
         points_list = []
@@ -40,8 +46,8 @@ class PointPattern(object):
       nc = 0
       indexed = []
       
-      for i, point_1 in enumerate(self.points):
-            for j, point_2 in enumerate(self.points):
+      for i in range(len(self.points)):
+            for j in range(len(self.points)):
                if j in indexed:
                    continue
                if i == j:
