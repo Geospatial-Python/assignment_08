@@ -89,7 +89,7 @@ class PointPattern(object):
                     if abs(disc_step[j] - i_step) < min_dist:
                         min_dist = abs(disc_step[j] - i_step)
                     else:
-                        minDist = minDist
+                        min_dist = min_dist
             sum += min_dist
 
        return sum / nsteps
