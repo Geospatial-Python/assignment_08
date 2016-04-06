@@ -6,8 +6,8 @@ import os
 
 sys.path.insert(0, os.path.abspath('..'))
 
-from . import utils
-from . import point
+import utils
+import point
 
 def find_largest_city(gj):
     """
@@ -263,7 +263,7 @@ def permutations(p=99, n=100, marks=None):
 def find_criticals(perms):
     lower = min(perms)
     upper = max(perms)
-    return (lower, upper)
+    return lower, upper
 
 def check_significance(lower, upper, observed):
     if observed > upper:

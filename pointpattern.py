@@ -1,5 +1,5 @@
-from .point import Point
-from . import analytics
+from point import Point
+import analytics
 import random
 import numpy as np
 import scipy.spatial as ss
@@ -8,18 +8,23 @@ class PointPattern(object):
     def __init__(self):
         self.points = []
 
+    def add_point(self, point):
+        self.points.append(point)
+
     def average_nearest_neighbor_distance(self, mark=None):
         return analytics.average_nearest_neighbor_distance(self.points, mark)
 
-    def average_nearest_neighbor_distance_kdtree(self, mark=None):
+    def average_nearest_neighbor_distance_kdtree(self, mark_name=None):
         temp_points = []
         real_points = []
         distances = []
 
-        if mark is None:
+        if mark_name is None:
             temp_points = self.points
         else:
-            temp_points = [i for i in self.points if self.points.mark is mark]
+            for i, point in self.points:
+                if point.mark is mark:
+                    temp_points.append(point)
 
         for point in temp_points:
             real_points.append((point.x, point.y))
@@ -31,9 +36,6 @@ class PointPattern(object):
             distances.append(nearest_neighbor_distance)
 
         return np.mean(distances)
-
-    def add_point(self, point):
-        self.points.append(point)
 
     def remove_point(self, index):
         del(self.points[index])

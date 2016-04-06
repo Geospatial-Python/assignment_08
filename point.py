@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.abspath('..'))
 
-from . import utils
+import utils
 
 
 class Point(object):
@@ -16,7 +16,7 @@ class Point(object):
 
 	#Magic methods
 	def __str__(self):
-		return ("({0}, {1}").format(self.x, self.y)
+		return ("{0}, {1}").format(self.x, self.y)
 
 	def __eq__(self, other):
 		return self.x == other.x and self.y == other.y
