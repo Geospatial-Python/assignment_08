@@ -1,4 +1,4 @@
-from .point import Point
+from . import point
 from . import analytics
 import random
 import numpy as np
@@ -12,7 +12,7 @@ class PointPattern(object):
     def add_point(self, point):
         self.points.append(point)
         
-    def remove_point(self, index)
+    def remove_point(self, index):
       try:
          del(self.points[index])
       except:
@@ -22,23 +22,47 @@ class PointPattern(object):
     
         return analytics.average_nearest_neighbor_distance(self.points, mark)
     
-    def average_nearest_neighbor_distance_kdtree(self)
-    nn_distances = []
-    for p in points:
-    nearest_neighbor_distance, nearest_neighbor = kdtree.query(p, k=2)
-    nn_distances.append(nearest_neighbor_distance[0])
-    nn_distances.append(nearest_neighbor_distance[1])
-    nn_distances = np.array(nn_distances)
-    
-    print(nearest_neighbor_distance, nearest_neighbor)
+    def average_nearest_neighbor_distance_kdtree(self):
+        point_list = []
+        points = self.points
+        for point in points:
+            point_list.append(point.array())
+        stack = np.vstack(point_list)
+
+        nn_distances = []
+        kdtree = ss.KDTree(stack)
+        for p in stack:
+            nearest_neighbor_distance, nearest_neighbor = kdtree.query(p, k=2)
+            nn_distances.append(nearest_neighbor_distance[1])
+        nn_distances = np.array(nn_distances)
+
+        return(np.average(nn_distances))
+        print(np.average(nn_distances))
         
-    def average_nearest_neighbor_distance_numpy(self)
-        points_list = []
+    def average_nearest_neighbor_distance_numpy(self):
+        point_list = []
         for point in self.points:
             point_list.append(point.array())
         ndarray = np.array(point_list)
-        nn = []
-        temp_nn = None
+        nearest_neighbor = []
+        temp_nearest_neighbor = None
+
+        for i, point_1 in enumerate(ndarray):
+            for j, point_2 in enumerate(ndarray):
+                if i == j:
+                    continue
+                distance = ss.distance.euclidean(point_1, point_2)
+
+                if temp_nearest_neighbor is None:
+                    temp_nearest_neighbor = distance
+                elif temp_nearest_neighbor > distance:
+                    temp_nearest_neighbor = distance
+
+            nearest_neighbor.append(temp_nearest_neighbor)
+            temp_nearest_neighbor = None
+
+
+
         
        
     def number_of_coincident(self):
@@ -55,17 +79,17 @@ class PointPattern(object):
                if self.points[i] == self.points[j]:
                   nc += 1
                   indexed.append(j)
-        return nc
+      return nc
     
     def list_marks(self):
       
       marks = []
-       for point in self.points:
+      for point in self.points:
            if point.mark is not None and point.mark not in marks:
-               marks.append(point.mark)
-       return marks
+            marks.append(point.mark)
+      return marks
        
-    def find_subset_with_mark(self, mark):
+    def subsets_with_mark(self, mark):
     
         marked_points = []
         for points in self.points:
@@ -102,13 +126,13 @@ class PointPattern(object):
            for j in range(len(disc_step)):
                 if i == j:
                     continue
-                if min_dist = None:
+                if min_dist is None:
                     min_dist = abs(disc_step[j] - i_step)
                 else:
                     if abs(disc_step[j] - i_step) < min_dist:
                         min_dist = abs(disc_step[j] - i_step)
                     else:
                         min_dist = min_dist
-            sum += min_dist
+                sum += min_dist
 
        return sum / nsteps
