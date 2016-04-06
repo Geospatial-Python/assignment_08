@@ -2,13 +2,35 @@ from .point import Point
 from . import analytics
 import random
 import numpy as np
+import scipy.spatial as ss
 
-def PointPattern(object):
+class PointPattern(object):
     def __init__(self):
         self.points = []
 
     def average_nearest_neighbor_distance(self, mark=None):
         return analytics.average_nearest_neighbor_distance(self.points, mark)
+
+    def average_nearest_neighbor_distance_kdtree(self, mark=None):
+        temp_points = []
+        real_points = []
+        distances = []
+
+        if mark is None:
+            temp_points = self.points
+        else:
+            temp_points = [i for i in self.points if self.points.mark is mark]
+
+        for point in temp_points:
+            real_points.append((point.x, point.y))
+
+        kdtree = ss.KDTree(real_points)
+
+        for p in real_points:
+            nearest_neighbor_distance, nearest_neighbor = kdtree.query(p, k=2)
+            distances.append(nearest_neighbor_distance)
+
+        return np.mean(distances)
 
     def add_point(self, point):
         self.points.append(point)
@@ -18,7 +40,7 @@ def PointPattern(object):
 
     def count_coincident_points(self):
         count = 0
-        coincidnet_list = []
+        coincident_list = []
 
         for i, point in enumerate(self.points):
             for j, point2 in enumerate(self.points):
@@ -39,9 +61,11 @@ def PointPattern(object):
             if point.mark is not None and point.mark not in marks:
                 marks.append(point.mark)
 
+        return marks
+
     def return_subset(self, mark):
         #creates a list of points that have the same mark as passed
-        return [i for i in self.points if i == mark]
+        return [i for i in self.points if i.mark is mark]
 
     def create_random_points(self, n=None):
         rand_points = []
@@ -52,9 +76,19 @@ def PointPattern(object):
             n = len(self.points)
 
         for i in range(n):
-            rand_points.append(point.Point(rand.randint(1,100), rand.randint(1,100), mark=rand.choice(marks)))
+            rand_points.append(Point(rand.randint(1,100), rand.randint(1,100), mark=rand.choice(marks)))
 
         return rand_points
+
+    def generate_random_points(self, min=0, max=1, count=2):
+        marks = ['North', 'East', 'South', 'West']
+        rand_points = np.random.uniform(min, max, (count,2))
+        generated_points = []
+
+        for i, rpoint in enumerate(rand_points):
+            generated_points.append(point.Point(rpoint[0], rpoint[1], mark=random.choice(marks)))
+
+        return generated_points
 
     def create_realizations(self, k):
         return analytics.permutations(k)
