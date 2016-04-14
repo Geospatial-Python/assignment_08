@@ -1,7 +1,9 @@
 import random
+import math
 from . import point
 from . import analytics
 import numpy as np
+import scipy.spatial as ss
 
 
 class PointPattern(object):
@@ -100,6 +102,87 @@ class PointPattern(object):
 
         g = sums/nsteps
         return g
+
+
+#utilize a scipy.spatial.KDTree to compute the nearest neighbor distance
+
+    def kDTree_nearest_neighbor(self):
+        point_array = []                 # is the "tuple" that holds the arrays to be stacked
+        for p in self.points:            #add every point to the point_array
+            point_array.append(p.return_array())  #error here?
+
+        #now you have the vstack parameter:
+        point_ndarray = np.vstack(point_array)
+
+        #now you have the ndarray needed for kdtree, create your tree:
+        kdTree = ss.KDTree(point_array)
+
+        #now computer the nearest neighbors:
+        nn_dist = []
+        for p in point_ndarray:
+            nearest_neighbor_distance, nearest_neighbor_point = kdTree.query(p,k=2)
+            nn_dist.append(nearest_neighbor_distance[1]) #appending the second one to allow for self-neighbor
+
+        average = np.mean(nn_dist)
+        return average
+
+    #compute the nearest neighbor distance using numpy (ndarray and mean)
+    def numpy_nearest_neighbor(self):
+        shDistL = []
+        point_array = []
+        for p in self.points:
+            point_array.append(p.return_array())
+
+        #point_array = [ [1,2],[3,4],[5,6],[7.8] ]
+        #using the same logic that's in analytics:
+        for num1, p in enumerate(point_array):    # p = [1,2]
+            shortestDistance = math.inf
+            for num2, dp in enumerate(point_array):
+                if num1 != num2:
+                    dist = ss.distance.euclidean(p,dp)
+                    if(shortestDistance > dist):
+                        shortestDistance = dist
+            #now add the shortest distance of that point before it moves on to a new point:
+            shDistL.append(shortestDistance)
+        mean_d = np.mean(shDistL) #returns the average of the array of elements, so pass in shDistL
+
+        return mean_d
+
+    #compute the G function using numpy
+    def numpy_compute_g(self,nsteps):
+        ds = np.linspace(0,1,nsteps)   #get the steps in ds
+        sums =0
+
+        for i in range(nsteps):
+            oi = ds[i] #get the i'th observation
+            min_dist = None
+
+            for a,b in enumerate(ds):
+                temp = np.abs(b - oi)          #changed to use numpy's implementation
+
+                if a is not i:
+                    if min_dist is None: #for the first value
+                        min_dist = temp
+                    elif min_dist > temp:
+                        min_dist = temp
+            sums = sums + min_dist
+        g = sums/nsteps
+        return g
+
+
+    #Generate random points within some domain
+    def random_points_domain(self,numPoints = 2,start=0,stop=1,seed =None):
+        randomp = None
+        pointsList = []
+        if seed is None: #meaning no passed in starting value
+            randomp = np.random
+        else:
+            randomp = np.random.RandomState(seed) #instantiate seed
+            random.seed(seed)
+        points = randomp.uniform(start,stop, (numPoints,2))    #create ndarray
+        for x in range(points): #for all the points
+            pointsList.append(point.Point(points[x][0],points[x][1],np.random.choice(self.marks)))
+        return pointsList
 
 
 

@@ -25,5 +25,10 @@ class Point(object):
         point = (self.x,self.y)
         self.x,self.y = utils.shift_point(point,x_shift,y_shift)
 
+    #Add an attribute to your Point class that returns an array [x,y]
+    def return_array(self):
+        arrayy = [self.x,self.y]
+        return arrayy
+
 
 from . import utils
