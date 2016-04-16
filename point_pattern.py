@@ -5,6 +5,7 @@ import point
 import numpy as np
 import scipy.spatial as ss  
 from point import euclidean_distance
+from matplotlib.cbook import pts_to_midstep
 
 
 class PointPattern(object):
@@ -55,6 +56,13 @@ class PointPattern(object):
 
         return temp
     
+    def gen_rand_pts(self,upper_bound=1,lower_bound=0,num_pts=100):
+        
+        return np.random.uniform(lower_bound,upper_bound, (num_pts,2));
+        
+        
+    
+    
     def crit_pts(self):
         return analytics.critical_pts(self.points)
     
@@ -62,25 +70,37 @@ class PointPattern(object):
             
         return
 
-    def average_nearest_neighbor_distance_kd(self,points):
+    def average_nearest_neighbor_distance_kd(self,pts=None):
         mean=0;
+        
+        
+        if pts==None:
+            points = self.points
+        else:
+            points=pts
+            
         kdtree = ss.KDTree(points);
-    
         for i in points:
-            dist_nearest = kdtree.query(i, k=2)
-            mean+=dist_nearest;
-
+            dist_nearest, nn_pt = kdtree.query(i, k=2)
+            mean+=dist_nearest.item(1);
+            
+            #print(dist_nearest.item(1))
         return mean/len(points);
     
-    def average_nearest_neighbor_distance_numpy(self):
+    def average_nearest_neighbor_distance_numpy(self,pts=None):
         '''
             computing using numpy
         '''
-        points = np.array(self.points)
+        points=[]
+        if pts==None:
+            points = self.points
+        else:
+            points=pts
+        
         nn_dists = []
     
         n_dist_current=math.inf
-        
+        print(pts)
         for i in points:
             for j in points:
             

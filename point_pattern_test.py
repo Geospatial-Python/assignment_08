@@ -6,8 +6,19 @@ Created on Mar 14, 2016
 import random
 import unittest
 from point import Point
+from point_pattern import PointPattern as pp
+
 
 class TestFunctionalPointPattern(unittest.TestCase):
+    
+    def setUp(self):
+        self.pp=pp();
+        random.seed(12345)
+        for i in range(20):
+            pt=(random.random(),random.random())
+            self.pp.add_pt(pt)
+        
+        #print(self.pp)
     def test_set_point(self):
         testPoint=Point(1,4)
         self.assertTrue(testPoint.x==1 and testPoint.y==4)
@@ -29,9 +40,16 @@ class TestFunctionalPointPattern(unittest.TestCase):
         self.assertEqual((pt.x,pt.y),(5,20))
     
     def test_add(self):
-        pt=Point(1,4)
-        pt=pt+10
-        self.assertEqual((pt.x,pt.y),(11,14))
+        
+        self.assertEqual(self.pp.points[19],(0.23262110322840768, 0.5235975801646584));
+        
+    def test_ave_nn_dist(self):
+        self.assertAlmostEqual(self.pp.average_nearest_neighbor_distance_numpy(),0.13861788961152161,places=3);
+        
+    def test_ave_nn_dist_kdtree(self):
+        self.assertAlmostEqual(self.pp.average_nearest_neighbor_distance_kd(),0.13861788961152161,places=3);
+    
+    
     
     def test_marked(self):
         mark_list=['mercury', 'venus', 'earth', 'mars']

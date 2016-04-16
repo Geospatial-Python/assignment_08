@@ -18,7 +18,7 @@ def p_perms_marks(p=99,n=100,marks=None):
     for i in range(p):
         temp=utils.create_marked_rand_pts(100,marks)
         #print(temp.)
-        temp1=average_nearest_neighbor_distance_marks(temp,marks)
+        temp1=average_nearest_neighbor_distance(temp,marks)
         mean_nn_dist.append(temp1)
     
     return mean_nn_dist
@@ -84,6 +84,38 @@ def mean_center(points):
 
     return x, y
 
+def average_nearest_neighbor_distance(points,mark=None):
+    mean_d = 0
+    
+    if(mark==None):
+        for i in range(len(points)):
+            dist_nearest=math.inf
+            for j in range(len(points)):
+                temp_p1 = (points[i].x, points[i].y)
+                temp_p2 = (points[j].x, points[j].y)
+                dist = utils.euclidean_distance(temp_p1, temp_p2)
+                if temp_p1 == temp_p2:
+                    continue
+                elif dist < dist_nearest:
+                    dist_nearest = dist;
+                    mean_d += dist_nearest;
+                    mean_d=mean_d/(len(points))
+    else:
+        for i in range(len(points)):
+            dist_nearest=math.inf
+            for j in range(len(points)):
+                dist = utils.euclidean_distance((points[i].x, points[i].y), (points[j].x,points[j].y))
+                if temp_p1 == temp_p2:
+                    continue
+                elif dist < dist_nearest and temp_p1==temp_p2:
+                    dist_nearest = dist;
+                    mean_d += dist_nearest;
+                    mean_d=mean_d/(len(points))
+        
+    return mean_d
+
+
+"""
 def average_nearest_neighbor_distance_marks(points,mark=None):
     mean_d = 0
     for i in range(len(points)):
@@ -100,6 +132,7 @@ def average_nearest_neighbor_distance_marks(points,mark=None):
     mean_d=mean_d/(len(points))
     return mean_d
 
+
 def average_nearest_neighbor_distance(points):
     mean_d = 0
     for i in points:
@@ -113,3 +146,4 @@ def average_nearest_neighbor_distance(points):
         mean_d += dist_nearest;
     mean_d=mean_d/(len(points))
     return mean_d
+"""
