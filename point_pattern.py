@@ -97,7 +97,7 @@ class PointPattern(object):
         else:
             points=pts
         
-        nn_dists = []
+        nn_dists = np.array([])
     
         n_dist_current=math.inf
         print(pts)
@@ -109,7 +109,7 @@ class PointPattern(object):
                 elif(ss.distance.euclidean(i, j)<n_dist_current):
                     n_dist_current=ss.distance.euclidean(i,j);
         
-            nn_dists.append(n_dist_current);
+            nn_dists=np.concatenate((nn_dists,[n_dist_current]),axis=0);
             n_dist_current=math.inf;
     
         return np.mean(nn_dists);
