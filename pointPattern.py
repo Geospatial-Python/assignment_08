@@ -106,10 +106,17 @@ class PointPattern(object):
 
 #utilize a scipy.spatial.KDTree to compute the nearest neighbor distance
 
-    def kDTree_nearest_neighbor(self):
-        point_array = []                 # is the "tuple" that holds the arrays to be stacked
-        for p in self.points:            #add every point to the point_array
-            point_array.append(p.return_array())  #error here?
+    def kDTree_nearest_neighbor(self,mark=None):
+        point_array = [] # is the "tuple" that holds the arrays to be stacked
+        if not mark:
+            #then you dont want to look for a specific mark, and you can just find the average nearest neighbor of everything
+            for p in self.points:            #add every point to the point_array
+                point_array.append(p.return_array())
+        else:
+            #that means that there was something passed into mark and you have to only computer the nearest neighbor with that mark
+            for p in self.points:
+                if p.mark in mark: # passed in a possible list of marks
+                    point_array.append(p.return_array())
 
         #now you have the vstack parameter:
         point_ndarray = np.vstack(point_array)
@@ -127,11 +134,17 @@ class PointPattern(object):
         return average
 
     #compute the nearest neighbor distance using numpy (ndarray and mean)
-    def numpy_nearest_neighbor(self):
+    def numpy_nearest_neighbor(self,mark=None):
         shDistL = []
         point_array = []
-        for p in self.points:
-            point_array.append(p.return_array())
+        if not mark:
+            for p in self.points:
+                point_array.append(p.return_array())
+        else:
+            #that means a mark was passed in
+            for p in self.points:
+                if p.mark in mark:
+                    point_array.append(p.return_array())
 
         #point_array = [ [1,2],[3,4],[5,6],[7.8] ]
         #using the same logic that's in analytics:
