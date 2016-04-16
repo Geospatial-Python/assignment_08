@@ -3,9 +3,7 @@ import random
 import analytics
 import point
 import numpy as np
-import scipy.spatial as ss  
-from point import euclidean_distance
-from matplotlib.cbook import pts_to_midstep
+import scipy.spatial as ss
 
 
 class PointPattern(object):

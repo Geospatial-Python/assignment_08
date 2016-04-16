@@ -1,8 +1,3 @@
-'''
-Created on Mar 14, 2016
-
-@author: Prad
-'''
 import random
 import unittest
 from point import Point
@@ -49,7 +44,8 @@ class TestFunctionalPointPattern(unittest.TestCase):
     def test_ave_nn_dist_kdtree(self):
         self.assertAlmostEqual(self.pp.average_nearest_neighbor_distance_kd(),0.13861788961152161,places=3);
     
-    
+    def test_kd_vs_nn_dist(self):
+        self.assertAlmostEqual(self.pp.average_nearest_neighbor_distance_kd(),self.pp.average_nearest_neighbor_distance_numpy(),places=3);
     
     def test_marked(self):
         mark_list=['mercury', 'venus', 'earth', 'mars']

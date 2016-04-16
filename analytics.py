@@ -1,6 +1,5 @@
 import random
 import math
-
 import utils
 
 def p_perms(p=99,n=100,mark=None):
