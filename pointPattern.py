@@ -2,6 +2,7 @@ import random
 import math
 from . import point
 from . import analytics
+from . import utils
 import numpy as np
 import scipy.spatial as ss
 
@@ -71,7 +72,7 @@ class PointPattern(object):
     def critical_points(self):
         return analytics.critical_points(self.create_k_patterns(99))
 
-    def compute_g(self,nsteps):
+    def compute_g(self,nsteps,mark=None):
         """
 
         Parameters
@@ -82,26 +83,42 @@ class PointPattern(object):
         -------
 
         """
-        ds = np.linspace(0,1,nsteps)
+        point_array = []
+        if not mark:
+            for p in self.points:
+                point_array.append(p.return_array())
+        else:
+            #that means a mark(s) was passed in
+            for p in self.points:
+                if p.mark in mark:
+                    point_array.append(p.return_array())
+        shDistL = [] # list keeps track of all the nearest neighbor distances for each point
+        gFuncL = []
+        #for pointPattern range 0-5, the highest distance between them is < 8
+        ds = np.linspace(0,8,nsteps)
         sums = 0
-
-        for s in range(nsteps):
-            oi = ds[s]
-            minDist = None
-
-            for a,b in enumerate(ds):
-                temp = abs(b - oi)
-
-                if a is not s:
-                    if minDist is None: #for the first value
-                        minDist = temp
-                    elif minDist > temp: # if its less then the minDist, update
-                        minDist = temp
-
-            sums = sums + minDist
-
-        g = sums/nsteps
-        return g
+        N = np.point_array.size() #get a count of how many points there are
+        for dstep in ds:          #for every distance band dstep
+            for num1, p in enumerate(point_array):
+                shortestDistance = math.inf
+                for num2, dp in enumerate(point_array):
+                    if num1 != num2: #if they aren't the same point, find the distance between the two points
+                        p1 = (p.x,p.y)
+                        p2 = (dp.x,dp.y)
+                        dist = utils.euclidean_distance(p1, p2)
+                        if(shortestDistance > dist):
+                            shortestDistance = dist
+                #now add the shortest distance of that point before it moves on to a new point
+                shDistL.append(shortestDistance)
+            #now you have the minimum nearest neighbor distances of each point stored in shDistL.
+            #Check how many of those distances are less than the current distance band:
+            for d in shDistL:
+                count = 0
+                if d < dstep: #then it should be included in the count
+                    count = count + 1
+            #now I've got the count, compute the g function:
+            gFuncL.append(count/N)
+        return gFuncL
 
 
 #utilize a scipy.spatial.KDTree to compute the nearest neighbor distance
@@ -162,25 +179,46 @@ class PointPattern(object):
         return mean_d
 
     #compute the G function using numpy
-    def numpy_compute_g(self,nsteps):
-        ds = np.linspace(0,1,nsteps)   #get the steps in ds
-        sums =0
+    def numpy_compute_g(self,nsteps,mark=None):
+        point_array = []
+        if not mark:
+            for p in self.points:
+                point_array.append(p.return_array())
+        else:
+            #that means a mark(s) was passed in
+            for p in self.points:
+                if p.mark in mark:
+                    point_array.append(p.return_array())
+        shDistL = [] # list keeps track of all the nearest neighbor distances for each point
+        gFuncL = []
 
-        for i in range(nsteps):
-            oi = ds[i] #get the i'th observation
-            min_dist = None
+        #first get the nearest neighbor distance for each point:
+        for num1, p in enumerate(point_array):
+            shortestDistance = math.inf
+            for num2, dp in enumerate(point_array):
+                if num1 != num2:
+                    p1 = (p.x,p.y)
+                    p2 = (dp.x,dp.y)
+                    dist = utils.euclidean_distance(p1, p2)
+                    if(shortestDistance > dist):
+                            shortestDistance = dist
+            shDistL.append(shortestDistance)
+        #now you have the minimum nearest neighbor distances of each point stored in shDistL.
+        #use that to compute the steps:
+        shDistL = np.array(shDistL)
+        min = np.ceil(np.amin(shDistL))
+        max = np.ceil(np.amax(shDistL))
+        ds = np.linspace(min,max,nsteps)
+        N = np.point_array.size() #get a count of how many points there are
 
-            for a,b in enumerate(ds):
-                temp = np.abs(b - oi)          #changed to use numpy's implementation
-
-                if a is not i:
-                    if min_dist is None: #for the first value
-                        min_dist = temp
-                    elif min_dist > temp:
-                        min_dist = temp
-            sums = sums + min_dist
-        g = sums/nsteps
-        return g
+        #now calculate the g function for every distance band:
+        for dstep in ds:
+            count = np.where(shDistL < dstep)
+            count = len(count[0])
+            #now you have the count of observations under that distance band.
+            #divide by N and add it to the gFuncL.
+            gFuncL.append(count/N)
+        return gFuncL
 
 
     #Generate random points within some domain

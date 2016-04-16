@@ -38,10 +38,23 @@ for geometry, attributes in zip(shapefile,dbf):
     print("The new_haven_merged dataset with the mark 'all-cases-dead-on-arrival' mark has a total average nearest neighbor distance of: ", kd_avg_nn_mark)
 
     kd_avg_nn_mark2 = point_pattern.kDTree_nearest_neighbor(['all-cases-dead-on-arrival',' 1605 WHALLEY AVE'])
+    print("The new_have_merged dataset with the mark 'all-cases-dead-on-arrival' and '1605 WHALLEY AVE' marks has a total average nearest neighbor distance of", kd_avg_nn_mark2)
 
     #illustrate the use of the g function:
+    np_compute_g = point_pattern.numpy_compute_g(12)
+    print("The new_haven_merged dataset's g function results are:")
+    for g in np_compute_g:
+        print(g)
 
+    np_compute_g_mark  = point_pattern.numpy_compute_g(12,['all-cases-dead-on-arrival'])
+    print("The new_haven_merged dataset's g function results with a mark of 'all-cases-dead-on-arrival' are: ")
+    for g in np_compute_g_mark:
+        print(g)
 
+    np_compute_g_mark2 = point_pattern.numpy_compute_g(12,['all-cases-dead-on-arrival',' 1605 WHALLEY AVE'])
+    print("The new_haven_merged dataset's g function results with a marks of 'all-cases-dead-on-arrival' and ' 1605 WHALLEY AVE' are: ")
+    for g in np_compute_g_mark2:
+        print(g)
 
 from point import Point
 from pointPattern import PointPattern

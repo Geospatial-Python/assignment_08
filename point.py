@@ -9,7 +9,8 @@ class Point(object):
         return Point(self.x + other.x,self.y + other.y)
     def __radd__(self,other):
         return Point(self.x + other, self.y + other)
-
+    def __sub__(self, other):                            #implements self - other
+        return Point(self.x - other.x,self.y - other.y)
     def __eq__(self,other):
         return self.x == other.x and self.y == other.y
 
