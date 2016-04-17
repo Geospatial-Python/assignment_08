@@ -4,6 +4,7 @@ import analytics
 import point
 import numpy as np
 import scipy.spatial as ss
+from point import euclidean_distance
 
 
 class PointPattern(object):
@@ -57,9 +58,6 @@ class PointPattern(object):
     def gen_rand_pts(self,upper_bound=1,lower_bound=0,num_pts=100):
         
         return np.random.uniform(lower_bound,upper_bound, (num_pts,2));
-        
-        
-    
     
     def crit_pts(self):
         return analytics.critical_pts(self.points)
@@ -70,7 +68,6 @@ class PointPattern(object):
 
     def average_nearest_neighbor_distance_kd(self,pts=None):
         mean=0;
-        
         
         if pts==None:
             points = self.points
@@ -112,24 +109,36 @@ class PointPattern(object):
     
         return np.mean(nn_dists);
     
-    def g_func(self,nsteps):
+    def g_func(self,nsteps,marks=None):
         '''
             computing using numpy
         '''
-        ds = np.linspace(0,1,nsteps); #apply numpy
-        dsum=0;
         
-        for i in range(nsteps):
-            oi = ds[i]
-            dmin=math.inf
+        ds = np.linspace(0,1,nsteps); #apply numpy
+        
+        N=len(self.points)
+        
+        g_funct_result=[]
+        
+        min_dist=math.inf
+        
+        for curr_d in ds:       #loop through bands
+            funct_val=0         #reset function value
             
-            for k in enumerate (ds):
-                temp= abs(k-oi)
-                if k != i:
-                    if (dmin > temp):
-                        dmin = temp
+            for p_index1, i in enumerate(self.points):  #find NN dists
                 
-            dsum += dmin
+                for p_index2, j in enumerate(self.points):
+                    curr_dist=ss.distance.euclidean(i, j)
+                    if p_index1==p_index2:
+                        continue
+                    
+                    elif(min_dist>curr_dist):
+                        min_dist=curr_dist
+                
+                if(min_dist<curr_d):    #if NN dist is less than curr_d
+                    funct_val+=1        #increment funct_val
+        
+            g_funct_result.append(funct_val/N)  #add func val
             
-        return dsum/nsteps
+        return g_funct_result
         

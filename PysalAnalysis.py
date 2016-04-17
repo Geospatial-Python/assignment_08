@@ -10,5 +10,5 @@ shapefile = ps.open(ps.examples.get_path('new_haven_merged.shp'))
 random.seed(12345)
 
 
-nn = PointPattern.nearest_neighbor_KD(pattern)
+nn = PointPattern.average_nearest_neighbor_distance_kd(pattern)
 print('This interesting mark has a nearest neighbor distance of {}'.format(nn))
