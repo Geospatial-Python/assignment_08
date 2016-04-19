@@ -132,8 +132,10 @@ class PointPattern(object):
         else:
             #that means that there was something passed into mark and you have to only computer the nearest neighbor with that mark
             for p in self.points:
-                if p.mark in mark: # passed in a possible list of marks
-                    point_array.append(p.return_array())
+                for m in mark: # passed in a possible list of marks
+                    if m in p.mark:
+                        point_array.append(p.return_array())
+                        break #so that you don't add duplicates if it has both marks for example
 
         #now you have the vstack parameter:
         point_ndarray = np.vstack(point_array)
@@ -160,7 +162,7 @@ class PointPattern(object):
         else:
             #that means a mark was passed in
             for p in self.points:
-                if p.mark in mark:
+                if mark in p.mark:
                     point_array.append(p.return_array())
 
         #point_array = [ [1,2],[3,4],[5,6],[7.8] ]
@@ -187,8 +189,10 @@ class PointPattern(object):
         else:
             #that means a mark(s) was passed in
             for p in self.points:
-                if p.mark in mark:
-                    point_array.append(p.return_array())
+                for m in mark:
+                    if m in p.mark:
+                        point_array.append(p.return_array())
+                        break # so that you don't add duplicates if it has both marks for example
         shDistL = [] # list keeps track of all the nearest neighbor distances for each point
         gFuncL = []
 
@@ -197,19 +201,22 @@ class PointPattern(object):
             shortestDistance = math.inf
             for num2, dp in enumerate(point_array):
                 if num1 != num2:
-                    p1 = (p.x,p.y)
-                    p2 = (dp.x,dp.y)
-                    dist = utils.euclidean_distance(p1, p2)
+                #    print(p)
+                #    print(dp)
+                #    p1 = (p.x,p.y)
+                #    p2 = (dp.x,dp.y)
+                #    dist = utils.euclidean_distance(p1, p2)
+                    dist = ss.distance.euclidean(p,dp)
                     if(shortestDistance > dist):
                             shortestDistance = dist
             shDistL.append(shortestDistance)
+           # print("the shortest distance: ",shortestDistance)
         #now you have the minimum nearest neighbor distances of each point stored in shDistL.
         #use that to compute the steps:
-        shDistL = np.array(shDistL)
-        min = np.ceil(np.amin(shDistL))
-        max = np.ceil(np.amax(shDistL))
+        min = np.amin(shDistL)
+        max = np.amax(shDistL)*1.5 #so that the last max distance on the g function will fall under a distance band just a little bit larger.
         ds = np.linspace(min,max,nsteps)
-        N = np.point_array.size() #get a count of how many points there are
+        N = np.size(point_array) #get a count of how many points there are
 
         #now calculate the g function for every distance band:
         for dstep in ds:
