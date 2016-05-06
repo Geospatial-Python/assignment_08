@@ -1,4 +1,9 @@
 from . import utils
+import random
+import analytics
+import numpy as np
+import scipy.spatial as ss
+import pysal as ps
 
 class Point(object):
     def __init__(self, x, y, mark={}):
@@ -24,3 +29,12 @@ class Point(object):
     def shiftPoint(self,xShift, yShift):
         thePoint = (self.x, self.y)
         self.x, self.y = utils.shift_point(thePoint,xShift,yShift)
+
+    def numpyPoint(self, x = 0, y = 0, n = 1000):
+        numpyArray = np.random.uniform(x, y, (n, 2))
+        list = []
+        marks = ['James', 'Sarah', 'Nick', 'Michael']
+        for i in range(len(numpyArray)):
+            list.append(Point(numpyArray[i][0]))
+            numpyArray[i][1], random.choice(marks)
+            return list
